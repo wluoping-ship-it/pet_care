@@ -474,8 +474,16 @@
 
     .price {
       margin: 18px 0 22px;
+      width: fit-content;
+      padding: 6px 10px;
+      background-color: transparent;
+      border-radius: 8px;
       font-size: 42px;
       font-weight: 900;
+    }
+
+    .price-card:nth-child(1) .price {
+      background-color: #b09caf;
     }
 
     .price small {

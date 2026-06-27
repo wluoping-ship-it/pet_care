@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request) {
   try {
     await initializeDatabase();
-    const { owner, phone, pet, size, serviceId, date, note } = await request.json();
+    const { owner, phone, pet, size, serviceId, date, visitTime, note } = await request.json();
 
     if (!owner || !phone || !pet || !size || !serviceId || !date) {
       return NextResponse.json({ message: "请填写完整的预约信息。" }, { status: 400 });
@@ -20,9 +20,9 @@ export async function POST(request) {
     const estimatedPrice = estimatePrice(service.price, pet, size);
     const result = await run(
       `INSERT INTO bookings
-        (owner_name, phone, pet_type, pet_size, service_id, visit_date, note, estimated_price)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [owner.trim(), phone.trim(), pet, size, service.id, date, (note || "").trim(), estimatedPrice]
+        (owner_name, phone, pet_type, pet_size, service_id, visit_date, visit_time, note, estimated_price)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [owner.trim(), phone.trim(), pet, size, service.id, date, visitTime || null, (note || "").trim(), estimatedPrice]
     );
 
     return NextResponse.json(
