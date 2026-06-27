@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { all, initializeDatabase } from "../../../lib/db";
+import { listServices } from "../../../lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await initializeDatabase();
-    const services = await all("SELECT * FROM services ORDER BY price ASC");
+    const services = await listServices();
     return NextResponse.json(services);
   } catch (error) {
     console.error(error);

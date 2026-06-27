@@ -1,29 +1,33 @@
 import { NextResponse } from "next/server";
-import { estimatePrice, get, initializeDatabase, run } from "../../../lib/db";
+import { createBooking, estimatePrice, getServiceById } from "../../../lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request) {
   try {
-    await initializeDatabase();
     const { owner, phone, pet, size, serviceId, date, visitTime, note } = await request.json();
 
     if (!owner || !phone || !pet || !size || !serviceId || !date) {
       return NextResponse.json({ message: "请填写完整的预约信息。" }, { status: 400 });
     }
 
-    const service = await get("SELECT id, price FROM services WHERE id = ?", [Number(serviceId)]);
+    const service = await getServiceById(serviceId);
     if (!service) {
       return NextResponse.json({ message: "请选择有效的护理套餐。" }, { status: 400 });
     }
 
     const estimatedPrice = estimatePrice(service.price, pet, size);
-    const result = await run(
-      `INSERT INTO bookings
-        (owner_name, phone, pet_type, pet_size, service_id, visit_date, visit_time, note, estimated_price)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [owner.trim(), phone.trim(), pet, size, service.id, date, visitTime || null, (note || "").trim(), estimatedPrice]
-    );
+    const result = await createBooking({
+      owner,
+      phone,
+      pet,
+      size,
+      serviceId: service.id,
+      date,
+      visitTime,
+      note,
+      estimatedPrice
+    });
 
     return NextResponse.json(
       {

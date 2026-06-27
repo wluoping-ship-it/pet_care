@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { all, initializeDatabase } from "../../../lib/db";
+import { listReviews } from "../../../lib/db";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    await initializeDatabase();
-    const reviews = await all("SELECT * FROM reviews ORDER BY created_at DESC, id DESC LIMIT 12");
+    const reviews = await listReviews();
     return NextResponse.json(reviews);
   } catch (error) {
     console.error(error);

@@ -1,7 +1,8 @@
 .next/
 .netlify/
 .npm-cache/
+.git/
+.agents/
 node_modules/
 data/*.db
 data/*.db-*
-
